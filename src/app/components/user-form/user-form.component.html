@@ -1,0 +1,138 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <!-- (1) Nome Completo -->
+  <div>
+    <mat-form-field>
+      <input matInput placeholder="Nome Completo" formControlName="fullName" />
+
+      <mat-error *ngIf="fullName?.invalid && fullName?.touched"
+        >Algo não está certo...</mat-error
+      >
+    </mat-form-field>
+  </div>
+
+  <!-- (2) Email -->
+  <div>
+    <mat-form-field>
+      <input matInput placeholder="Email" formControlName="email" />
+
+      <mat-error *ngIf="email?.invalid && email?.touched"
+        >Algo não está certo...</mat-error
+      >
+    </mat-form-field>
+  </div>
+
+  <!-- (3) NIF -->
+  <div>
+    <mat-form-field>
+      <input matInput placeholder="NIF" formControlName="nif" />
+
+      <mat-error *ngIf="nif?.invalid && nif?.touched"
+        >Algo não está certo...</mat-error
+      >
+    </mat-form-field>
+  </div>
+
+  <!-- (4) Data de Nascimento -->
+  <div>
+    <mat-form-field>
+      <mat-label>Data de Nascimento</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="birthday" />
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+
+      <mat-error *ngIf="birthday?.hasError('required') && birthday?.touched">
+        Insere a tua data de nascimento.
+      </mat-error>
+      <mat-error *ngIf="birthday?.hasError('minimumAge')">
+        Tens de ter no mínimo 18 anos.
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <!-- (5) País -->
+  <div>
+    <mat-form-field>
+      <mat-select formControlName="country" placeholder="País">
+        <mat-option *ngFor="let country of countries" [value]="country.name">
+          {{ country.name }}
+        </mat-option>
+      </mat-select>
+
+      <mat-error *ngIf="country?.invalid && country?.touched"
+        >Seleciona o teu país.</mat-error
+      >
+    </mat-form-field>
+  </div>
+
+  <!-- (6) Cidade -->
+  <div *ngIf="country?.value">
+    <mat-form-field>
+      <mat-select formControlName="city" placeholder="Cidade">
+        <mat-option
+          *ngFor="let city of getCitiesByCountry(country?.value)"
+          [value]="city.name"
+        >
+          {{ city.name }}
+        </mat-option>
+      </mat-select>
+
+      <mat-error *ngIf="city?.invalid && city?.touched"
+        >Seleciona a tua cidade.</mat-error
+      >
+    </mat-form-field>
+  </div>
+
+  <!-- (7) Endereço -->
+  <div formGroupName="address" class="address">
+    <mat-form-field>
+      <input matInput formControlName="street" placeholder="Rua" />
+
+      <mat-error *ngIf="street?.invalid && street?.touched"></mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput formControlName="doorNumber" placeholder="Porta" />
+
+      <mat-error *ngIf="doorNumber?.invalid && doorNumber?.touched"></mat-error>
+    </mat-form-field>
+
+    <!-- (8) Código Postal -->
+    <mat-form-field>
+      <input matInput formControlName="zipCode" placeholder="Código Postal" />
+
+      <mat-error *ngIf="zipCode?.invalid && zipCode?.touched"></mat-error>
+      <mat-error *ngIf="zipCode?.hasError('pattern')"></mat-error>
+    </mat-form-field>
+  </div>
+
+  <!-- (9) Telefone -->
+  <div>
+    <mat-form-field>
+      <input matInput placeholder="Telefone" formControlName="phone" />
+
+      <mat-error *ngIf="phone?.invalid && phone?.touched"
+        >Formato inválido.</mat-error
+      >
+    </mat-form-field>
+  </div>
+
+  <!-- (10) Género -->
+  <div>
+    <mat-form-field>
+      <mat-select formControlName="gender" placeholder="Género">
+        <mat-option value="Masculino">Masculino</mat-option>
+        <mat-option value="Feminino">Feminino</mat-option>
+      </mat-select>
+
+      <mat-error *ngIf="gender?.invalid && gender?.touched"
+        >Seleciona o teu género.</mat-error
+      >
+    </mat-form-field>
+  </div>
+
+  <!-- Submeter -->
+  <button mat-raised-button [disabled]="userForm.invalid">Submeter</button>
+</form>

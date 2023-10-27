@@ -24,7 +24,7 @@
   <!-- (3) NIF -->
   <div>
     <mat-form-field>
-      <input matInput placeholder="NIF" formControlName="nif" />
+      <input matInput placeholder="NIF" formControlName="nif" maxlength="9" />
 
       <mat-error *ngIf="nif?.invalid && nif?.touched"
         >Algo não está certo...</mat-error
@@ -41,6 +41,7 @@
         matIconSuffix
         [for]="picker"
       ></mat-datepicker-toggle>
+      <mat-hint>DD/MM/AAAA</mat-hint>
       <mat-datepicker #picker></mat-datepicker>
 
       <mat-error *ngIf="birthday?.hasError('required') && birthday?.touched">

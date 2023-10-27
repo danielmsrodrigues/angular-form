@@ -3,7 +3,7 @@ import {
   FormBuilder,
   Validators,
   FormGroup,
-  AbstractControl,
+  ValidatorFn,
 } from '@angular/forms';
 import { COUNTRY } from 'src/app/country';
 import { Country } from 'src/app/interface/Country';
@@ -12,6 +12,7 @@ import { Country } from 'src/app/interface/Country';
   selector: 'app-user-form',
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.css'],
+  providers: [],
 })
 export class UserFormComponent {
   userForm!: FormGroup;
@@ -36,7 +37,7 @@ export class UserFormComponent {
           Validators.pattern(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/),
         ],
       ],
-      nif: ['', [Validators.required]],
+      nif: ['', [Validators.required, this.nifValidator()]],
       birthday: ['', [Validators.required, this.validateMinimumAge(18)]],
       country: ['', [Validators.required]],
       city: ['', [Validators.required]],
@@ -50,6 +51,56 @@ export class UserFormComponent {
       this.validateZipCode();
     });
   }
+
+  // <--!-->//
+
+  // a função recebe um argumento NIF que é aquilo que se prentende validar
+  validateNIF(nif: string): boolean {
+    // verificação se o primeiro ou os dois primeiros digitios são válidos
+    if (
+      !['1', '2', '3', '5', '6', '8'].includes(nif.substring(0, 1)) &&
+      !['45', '70', '71', '72', '77', '79', '90', '91', '98', '99'].includes(
+        nif.substring(0, 2)
+      )
+    ) {
+      return false;
+    }
+
+    // o NIF a atribuir às pessoas singulares, sejam cidadãos nacionais ou estrangeiros, é um número composto por nove dígitos, sendo os oito primeiros sequenciais e o último um dígito de controlo.
+    // a variável "total" verifica se os 8 primeiros digitos são válidos de acordo com a sequência definida
+    // se algum destes digitos não corresponder com a sequência esperada, a soma de todos não corresponderá ao resultado esperado, resultando num NIF incorreto
+    let total =
+      +nif[0] * 9 +
+      +nif[1] * 8 +
+      +nif[2] * 7 +
+      +nif[3] * 6 +
+      +nif[4] * 5 +
+      +nif[5] * 4 +
+      +nif[6] * 3 +
+      +nif[7] * 2;
+
+    let module = total - Math.floor(total / 11) * 11;
+    let compare = module === 1 || module === 0 ? 0 : 11 - module;
+
+    return +nif[8] === compare;
+  }
+
+  nifValidator(): ValidatorFn {
+    return (input) => {
+      const nif = input.value;
+      if (!nif) {
+        return null;
+      }
+
+      if (!this.validateNIF(nif)) {
+        return { nifInvalid: true };
+      }
+
+      return null;
+    };
+  }
+
+  // <--!-->//
 
   validateMinimumAge(minimumAge: number) {
     return (input: any) => {

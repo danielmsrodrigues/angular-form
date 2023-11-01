@@ -1,5 +1,7 @@
 # MyApp
 
+This a form made using Angular's framework! It has validation on all fields and the submit button only becomes active once all fields are correctly filled.
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.7.
 
 ## Development server
